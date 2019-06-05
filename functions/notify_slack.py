@@ -51,7 +51,7 @@ def notify_slack(message):
                 "color": alert_severity_color(message['detail']['severity']),
                 "text": make_message_text(
                     region=message['region'],
-                    account=message['account'],
+                    account=message['detail']['accountId'],
                     severity=alert_severity_name(message["detail"]["severity"]),
                 ),
             }
