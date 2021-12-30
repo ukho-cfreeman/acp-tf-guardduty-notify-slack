@@ -1,5 +1,10 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13"
+}
+
+locals {
+  lambda_filename = "${path.module}/functions/notify_slack.py"
+  lambda_archive_filename = "${path.module}/functions/notify_slack.zip"
 }
 
 data "aws_sns_topic" "topic" {
@@ -42,25 +47,13 @@ resource "aws_lambda_permission" "sns_notify_slack" {
   source_arn    = local.sns_topic_arn
 }
 
-data "null_data_source" "lambda_file" {
-  inputs = {
-    filename = "${path.module}/functions/notify_slack.py"
-  }
-}
-
 #  the path the python or node.js file is stored in the directory
-data "null_data_source" "lambda_archive" {
-  inputs = {
-    filename = "${path.module}/functions/notify_slack.zip"
-  }
-}
-
 data "archive_file" "notify_slack" {
   count = var.create ? 1 : 0
 
   type        = "zip"
-  source_file = data.null_data_source.lambda_file.outputs.filename
-  output_path = data.null_data_source.lambda_archive.outputs.filename
+  source_file = local.lambda_filename
+  output_path = local.lambda_archive_filename
 }
 
 resource "aws_lambda_function" "notify_slack" {
