@@ -1,3 +1,9 @@
+# Do not delete this file without understanding the consequences
+#
+# It is required for successfully validating the module
+# By acting as a root module specifying the providers to use
+# See the Drone pipeline for how this file is used
+
 provider "aws" {
   region = "eu-west-2"
 }
