@@ -1,9 +1,5 @@
-terraform {
-  required_version = ">= 0.13"
-}
-
 locals {
-  lambda_filename = "${path.module}/functions/notify_slack.py"
+  lambda_filename         = "${path.module}/functions/notify_slack.py"
   lambda_archive_filename = "${path.module}/functions/notify_slack.zip"
 }
 
