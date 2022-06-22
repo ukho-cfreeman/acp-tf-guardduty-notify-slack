@@ -2,6 +2,9 @@ import os, boto3, json, base64, gzip
 import urllib.request, urllib.parse
 import logging
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 # Decrypt encrypted URL with KMS
 def decrypt(encrypted_url):
     region = os.environ['AWS_REGION']
@@ -39,10 +42,9 @@ def notify_slack(message):
     slack_emoji = os.environ['SLACK_EMOJI']
 
     payload = {
-        "channel": slack_channel,
         "username": slack_username,
         "icon_emoji": slack_emoji,
-        "text": "Duplicate - " + message['title'],
+        "text": message['title'],
         "attachments": [
             {
                 "fallback": "Something",
@@ -58,8 +60,8 @@ def notify_slack(message):
 
     data = urllib.parse.urlencode({"payload": json.dumps(payload)}).encode("utf-8")
     req = urllib.request.Request(slack_url)
-    urllib.request.urlopen(req, data)
-    return decrypt
+    result = urllib.request.urlopen(req, data).read()
+    return result
 
 def get_guardduty_event(bucket, key):
     s3_client = boto3.client('s3')
@@ -74,9 +76,6 @@ def get_guardduty_event(bucket, key):
     return json.loads(object_string)
 
 def lambda_handler(event, context):
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    
     logger.info("s3 event:")
     logger.info(event)
 
@@ -84,6 +83,7 @@ def lambda_handler(event, context):
       guardduty_event = get_guardduty_event(record['s3']['bucket']['name'], record['s3']['object']['key'])
       logger.info("GuardDuty event:")
       logger.info(guardduty_event)
-      notify_slack(guardduty_event)
-
+      result = notify_slack(guardduty_event)
+      logger.info("HTTP Result:")
+      logger.info(result)
     return
