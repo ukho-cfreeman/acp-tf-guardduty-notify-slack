@@ -44,10 +44,15 @@ def make_guardduty_alert_payload(guardduty_event):
     slack_username = os.environ["SLACK_USERNAME"]
     slack_emoji = os.environ["SLACK_EMOJI"]
 
+    title = guardduty_event["title"]
+    
+    if "sample" in guardduty_event["service"]["additionalInfo"]:
+        title = "[SAMPLE EVENT]" + title
+
     return {
         "username": slack_username,
         "icon_emoji": slack_emoji,
-        "text": guardduty_event["title"],
+        "text": title,
         "attachments": [
             {
                 "fallback": "Something",
@@ -90,7 +95,7 @@ def lambda_handler(event, context):
         if record["eventName"] == "Replication:OperationFailedReplication":
             logger.info("S3 replication failed")
             notify_slack({"text": "Replication failed"})
-        elif record["eventName"].startswith("ObjectCreated:"):
+        elif record["eventName"] == "ObjectCreated:Put":
             guardduty_event = get_guardduty_event(
                 record["s3"]["bucket"]["name"], record["s3"]["object"]["key"]
             )
