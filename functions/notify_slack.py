@@ -45,8 +45,8 @@ def make_guardduty_alert_payload(guardduty_event):
     slack_emoji = os.environ["SLACK_EMOJI"]
 
     title = guardduty_event["title"]
-    
-    if "sample" in guardduty_event["service"]["additionalInfo"]:
+
+    if "sample" in guardduty_event["service"]["additionalInfo"] and guardduty_event["service"]["additionalInfo"]["sample"] == True:
         title = "[SAMPLE EVENT]" + title
 
     return {
