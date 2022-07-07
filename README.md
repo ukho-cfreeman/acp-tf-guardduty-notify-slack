@@ -71,6 +71,7 @@ No modules.
 | <a name="input_alert_emails"></a> [alert\_emails](#input\_alert\_emails) | Emails to alert on if there is an error in the lambda | `list` | `[]` | no |
 | <a name="input_bucket_kms_key"></a> [bucket\_kms\_key](#input\_bucket\_kms\_key) | KMS key arn used to decrypt the GuardDuty s3 events | `any` | n/a | yes |
 | <a name="input_bucket_name"></a> [bucket\_name](#input\_bucket\_name) | Bucket name of GuardDuty event logs | `any` | n/a | yes |
+| <a name="input_ignore_sample_events"></a> [ignore\_sample\_events](#input\_ignore\_sample\_events) | Flag to toggle whether to ignore sample events | `string` | `"false"` | no |
 | <a name="input_lambda_function_name"></a> [lambda\_function\_name](#input\_lambda\_function\_name) | The name of the Lambda function to create | `string` | `"guardduty_notify_slack"` | no |
 | <a name="input_lambda_variable_kms_key"></a> [lambda\_variable\_kms\_key](#input\_lambda\_variable\_kms\_key) | ARN of the KM keys used for decryption of lambda variables | `any` | n/a | yes |
 | <a name="input_slack_channel"></a> [slack\_channel](#input\_slack\_channel) | The name of the channel in Slack for notifications | `any` | n/a | yes |

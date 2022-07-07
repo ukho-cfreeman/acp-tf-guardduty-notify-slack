@@ -20,6 +20,11 @@ variable "slack_emoji" {
   default     = ":aws:"
 }
 
+variable "ignore_sample_events" {
+  description = "Flag to toggle whether to ignore sample events"
+  default     = "false"
+}
+
 variable "lambda_variable_kms_key" {
   description = "ARN of the KM keys used for decryption of lambda variables"
 }

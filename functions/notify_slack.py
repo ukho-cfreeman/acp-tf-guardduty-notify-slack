@@ -44,15 +44,10 @@ def make_guardduty_alert_payload(guardduty_event):
     slack_username = os.environ["SLACK_USERNAME"]
     slack_emoji = os.environ["SLACK_EMOJI"]
 
-    title = guardduty_event["title"]
-
-    if "sample" in guardduty_event["service"]["additionalInfo"] and guardduty_event["service"]["additionalInfo"]["sample"] == True:
-        title = "[SAMPLE EVENT]" + title
-
     return {
         "username": slack_username,
         "icon_emoji": slack_emoji,
-        "text": title,
+        "text": guardduty_event["title"],
         "attachments": [
             {
                 "fallback": "Something",
@@ -101,6 +96,12 @@ def lambda_handler(event, context):
             )
             logger.info("GuardDuty event:")
             logger.info(guardduty_event)
+            if "sample" in guardduty_event["service"]["additionalInfo"] and guardduty_event["service"]["additionalInfo"]["sample"] == True:
+                logger.info("SAMPLE EVENT")
+                guardduty_event["title"] = "[SAMPLE EVENT]" + guardduty_event["title"]
+                if "IGNORE_SAMPLE_EVENTS" in os.environ and os.environ["IGNORE_SAMPLE_EVENTS"] == "true":
+                    logger.info("SAMPLE EVENT SKIPPED")
+                    continue 
             alert_payload = make_guardduty_alert_payload(guardduty_event)
             result = notify_slack(alert_payload)
             logger.info("HTTP Result:")
